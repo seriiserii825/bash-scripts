@@ -4,7 +4,7 @@ args=("$@")
 
 function gitUpdateAll(){
   date_now=$(date +"%Y-%m-%d %H:%M:%S")
-  dirs=(~/Documents/Knowledge-base ~/xubuntu ~/.password-store ~/.config/nvim ~/i3wm-home ~/i3wm-office ~/Documents/bash-scripts ~/Documents/bash-apps)
+  dirs=(~/Documents/Knowledge-base ~/xubuntu ~/.password-store ~/.config/nvim ~/i3wm-home ~/i3wm-office ~/Documents/bash-scripts ~/Documents/bash-apps ~/Documents/bash-private)
   for dir in "${dirs[@]}"; do
     echo "=========================================="
     echo "Update for $dir"
