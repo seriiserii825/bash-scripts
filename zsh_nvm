@@ -1,0 +1,44 @@
+# place this after nvm initialization!
+
+function checkNvmInPackageJson() {
+  if [ -f package.json ]; then
+    has_node_string=$(grep "node" package.json)
+    if [ command -v jq >/dev/null 2>&1 ]; then
+      echo "${tred}jq not installed${treset}"
+      sudo apt install jq -y
+      return
+    fi
+    if [ "$has_node_string" ]; then
+      echo "${tred}package.json has node string${treset}"
+      # get node version from package.json
+      node_version=$(jq -r '.engines.node' package.json)
+      new=$(echo $node_version | sed 's/[^0-9\.]//g')
+      touch .nvmrc
+      echo $new > .nvmrc
+    fi
+  fi
+}
+
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local node_version="$(nvm version)"
+  local nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$node_version" ]; then
+      nvm use
+    fi
+  elif [[ ! -f .nvmrc && -f package.json ]]; then
+    echo "${tmagenta}No .nvmrc file found${treset}"
+    checkNvmInPackageJson
+  elif [ "$node_version" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
