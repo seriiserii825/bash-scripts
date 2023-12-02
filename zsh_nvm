@@ -1,21 +1,27 @@
 # place this after nvm initialization!
 
-function checkNvmInPackageJson() {
-  if [ -f package.json ]; then
-    has_node_string=$(grep "node" package.json)
-    if [ command -v jq >/dev/null 2>&1 ]; then
-      echo "${tred}jq not installed${treset}"
-      sudo apt install jq -y
-      return
-    fi
-    if [ "$has_node_string" ]; then
-      echo "${tred}package.json has node string${treset}"
-      # get node version from package.json
-      node_version=$(jq -r '.engines.node' package.json)
-      new=$(echo $node_version | sed 's/[^0-9\.]//g')
-      touch .nvmrc
-      echo $new > .nvmrc
-    fi
+function nvmrcFromPackageJson() {
+  if [ command -v jq >/dev/null 2>&1 ]; then
+    echo "${tred}jq not installed${treset}"
+    sudo apt install jq -y
+    return
+  fi
+  echo "${tred}package.json has node string${treset}"
+  # get node version from package.json
+  node_version=$(jq -r '.engines.node' package.json)
+  new=$(echo $node_version | sed 's/[^0-9\.]//g')
+  touch .nvmrc
+  echo $new > .nvmrc
+}
+
+function toNvmrcAndPackageJsonFromGulpOrVite(){
+  has_gulpfile=$(ls | grep gulpfile.js)
+  echo "has_gulpfile: $has_gulpfile"
+  if [ has_gulpfile ]; then
+    package_json=$(cat package.json | jq '. += {"engines" : { "node" : "14.21.3" }}')
+    echo $package_json > package.json
+    current_dir=$(pwd)
+    cd $current_dir
   fi
 }
 
@@ -34,7 +40,12 @@ load-nvmrc() {
     fi
   elif [[ ! -f .nvmrc && -f package.json ]]; then
     echo "${tmagenta}No .nvmrc file found${treset}"
-    checkNvmInPackageJson
+    has_node_string=$(grep '"node":' package.json)
+    if [ "$has_node_string" ]; then
+      nvmrcFromPackageJson
+    else
+      toNvmrcAndPackageJsonFromGulpOrVite
+    fi
   elif [ "$node_version" != "$(nvm version default)" ]; then
     echo "Reverting to nvm default version"
     nvm use default
