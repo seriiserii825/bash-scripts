@@ -17,18 +17,18 @@ function convertToMp3(){
 cd $directory
 bat $file_path
 while read -r line; do
-    # line=${line%%&*}
-    yt-dlp -x  --audio-quality 0 --audio-format mp3 --embed-thumbnail --embed-metadata -o "%(title)s.%(ext)s" $line
+  new_line=$(echo $line | sed 's/&list.*//g')
+  yt-dlp -x  --audio-quality 0 --audio-format mp3 --embed-thumbnail --embed-metadata -o "%(title)s.%(ext)s" $new_line
 done < yt.txt
 }
 
 function clipboardToFile(){
-xclip -selection clipboard -o > $file_path
-echo >> $file_path
+  xclip -selection clipboard -o > $file_path
+  echo >> $file_path
 }
 
 function clearFile(){
-> $file_path
+  > $file_path
 }
 
 function viewFile(){
@@ -52,10 +52,13 @@ function start(){
 }
 
 function moveToDir(){
-read -p "Enter directory: " directory_name
-mkdir $directory_name
-mv $directory/*.mp3 $directory_name
+  read -p "Enter directory: " directory_name
+  mkdir $directory_name
+  mv $directory/*.mp3 $directory_name
 }
+
+echo "${tblue}Start downloading from clipboard?${treset}"
+echo "${tgreen}Start with dir: move files to choosen directory${treset}"
 
 COLUMNS=1
 select action in "Start" "Start with dir"; do
