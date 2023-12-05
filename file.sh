@@ -4,34 +4,43 @@ file_path=$( fzf )
 abs_path=$( realpath $file_path )
 echo "File path is: $file_path"
 COLUMNS=1
-select action in Delete DeleteAllExceptThis Read CopyName CopyPath CopyAbsPath CopyToDownloads FileToBuffer BufferToFile Execute Get_Files_Size OpenInBrowser ToTemplatePart Quit; do
+select action in Delete DeleteAllExceptThis Rename Read CopyName CopyPath CopyAbsPath CopyToDownloads FileToBuffer BufferToFile Execute OpenInBrowser ToTemplatePart Quit; do
   case $action in
     Delete)
       rm $file_path
-      echo "File $file_path was deleted"
+      echo "${tgreen}File $file_path was deleted${treset}"
       break
       ;;
     DeleteAllExceptThis)
       find -type f -not -name "$file" -delete
-      echo "All files except $file were deleted"
+      echo "${tgreen}All files except $file were deleted${treset}"
       break
+      ;;
+    Rename)
+      read -p "Enter new file name: " new_file_name
+      echo "file path is: $file_path"
+      dir_path=$(dirname $file_path)
+      echo "dir path is: $dir_path"
+      mv $file_path $dir_path/$new_file_name
+      echo "${tgreen}File $file_path was renamed to $dir_path/$new_file_name${treset}"
+      exit 0
       ;;
     Read)
       bat $file_path
       ;;
     CopyName)
       echo $file_path | awk 'BEGIN{FS="/"}{print $NF}' | tr -d '\n' | xsel -b -i
-      echo "File name was copied to clipboard"
+      echo "${tgreen}File name was copied to clipboard${treset}"
       break
       ;;
     CopyPath)
       echo $file_path | tr -d '\n' | xsel -b -i
-      echo "File path was copied to clipboard"
+      echo "${tgreen}File path was copied to clipboard${treset}"
       break
       ;;
     CopyAbsPath)
       echo $abs_path | tr -d '\n' | xsel -b -i
-      echo "File absolute path was copied to clipboard"
+      echo "${tgreen}File absolute path was copied to clipboard${treset}"
       break
       ;;
     CopyToDownloads)
@@ -40,7 +49,7 @@ select action in Delete DeleteAllExceptThis Read CopyName CopyPath CopyAbsPath C
       ;;
     Execute)
       chmod +x $file_path
-      echo "Execute permission was added to $file_path"
+      echo "${tgreen}Execute permission was added to $file_path${treset}"
       break
       ;;
     FileToBuffer)
@@ -52,13 +61,8 @@ select action in Delete DeleteAllExceptThis Read CopyName CopyPath CopyAbsPath C
       echo $clipboard > $file_path
       bat $file_path
       ;;
-    Get_Files_Size)
-      file * > files.txt
-      awk -F "," '{print $1, $2}' files.txt
-      rm files.txt
-      ;;
     OpenInBrowser)
-      google-chrome $file_path
+      vivaldi $file_path
       break
       ;;
     ToTemplatePart)
