@@ -10,8 +10,8 @@ function gitUpdateAll(){
     echo "Update for $dir"
     cd $dir
     git add .
-    git pull
     git commit -m "updated by script at $date_now"
+    git pull
     git push
     echo "=========================================="
   done
