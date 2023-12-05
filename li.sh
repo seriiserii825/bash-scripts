@@ -1,19 +1,9 @@
 #!/bin/bash
 # Check if the correct number of arguments is provided
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <filename>"
-    exit 1
-fi
-
-filename=$1
-
-# Check if the file exists
-if [ ! -f "$filename" ]; then
-    echo "File not found: $filename"
-    exit 1
-fi
-
-# Loop through each line in the file and add <li> at the start and </li> at the end
+cd ~/Downloads
+filename='list.txt'
+touch "$filename"
+xclip -o >> "$filename"
 new_file="new_file.txt"
 if [ -f "$new_file" ]; then
     rm "$new_file"
@@ -27,4 +17,7 @@ done < "$filename"
 echo "</ul>" >> "$new_file"
 
 cat "$new_file" > "$filename"
+
+xclip -sel clip < "$filename"
+rm "$filename"
 

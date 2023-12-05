@@ -1,5 +1,11 @@
 # place this after nvm initialization!
 
+function setNvmrc(){
+  touch .nvmrc
+  echo $1 > .nvmrc
+  nvm use
+}
+
 function nvmrcFromPackageJson() {
   if [ command -v jq >/dev/null 2>&1 ]; then
     echo "${tred}jq not installed${treset}"
@@ -7,21 +13,23 @@ function nvmrcFromPackageJson() {
     return
   fi
   echo "${tred}package.json has node string${treset}"
+  echo "${tred}creating .nvmrc from package.json${treset}"
   # get node version from package.json
   node_version=$(jq -r '.engines.node' package.json)
+  echo "node_version: $node_version"
   new=$(echo $node_version | sed 's/[^0-9\.]//g')
-  touch .nvmrc
-  echo $new > .nvmrc
+  setNvmrc $new
 }
 
 function toNvmrcAndPackageJsonFromGulpOrVite(){
-  has_gulpfile=$(ls | grep gulpfile.js)
-  echo "has_gulpfile: $has_gulpfile"
-  if [ has_gulpfile ]; then
+  if [ -f gulpfile.js ]; then
     package_json=$(cat package.json | jq '. += {"engines" : { "node" : "14.21.3" }}')
     echo $package_json > package.json
-    current_dir=$(pwd)
-    cd $current_dir
+    setNvmrc 14.21.3
+  else
+    package_json=$(cat package.json | jq '. += {"engines" : { "node" : "18.19.0" }}')
+    echo $package_json > package.json
+    setNvmrc 18.19.0
   fi
 }
 
