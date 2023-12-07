@@ -200,6 +200,7 @@ interface="${tcyan}interface${treset}";
 hook="${tyellow}hook${treset}";
 scss="${tyellow}scss${treset}";
 
+COLUMNS=1
 select action in $api $cmp $store $interface $hook $scss; do
   case $action in 
     $api)
