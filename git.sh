@@ -65,11 +65,11 @@ do
       break
       ;;
     show_stagged)
-      gitStagged
+      showStagged
       break
       ;;
     remove_stagged)
-      gitStagged
+      removeStagged
       break
       ;;
     *)
