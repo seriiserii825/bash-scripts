@@ -21,7 +21,8 @@ function showStagged(){
   for dir in $(find . -type d -name ".git"); do
     cd "$dir/.."
     if [ -n "$(git status --porcelain)" ]; then
-      echo "dir: $dir"
+      echo "dir=============================: $dir"
+      git status
     fi  
     cd - > /dev/null
   done
@@ -31,7 +32,7 @@ function removeStagged(){
   for dir in $(find . -type d -name ".git"); do
     cd "$dir/.."
     if [ -n "$(git status --porcelain)" ]; then
-      echo "dir: $dir"
+      echo "dir===========================: $dir"
       git reset --hard
       git add .
       git commit -m "updated by script at $date_now"
@@ -61,12 +62,7 @@ do
       break
       ;;
     show_stagged)
-      gitStagged
-      break
-      ;;
-    show_stagged)
       showStagged
-      break
       ;;
     remove_stagged)
       removeStagged
