@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash -x
 
 args=("$@")
 
@@ -17,33 +17,22 @@ function gitUpdateAll(){
   done
 }
 
-function showStagged(){
-  for dir in $(find . -type d -name ".git"); do
-    cd "$dir/.."
-    if [ -n "$(git status --porcelain)" ]; then
-      echo "dir=============================: $dir"
-      git status
-    fi  
-    cd - > /dev/null
-  done
-}
-
 function removeStagged(){
-  for dir in $(find . -type d -name ".git"); do
-    cd "$dir/.."
-    if [ -n "$(git status --porcelain)" ]; then
-      echo "dir===========================: $dir"
-      git reset --hard
-      git add .
-      git commit -m "updated by script at $date_now"
-      git pull
-      git push
-    fi  
+  projects_list=$(mgitstatus -e -d 4)
+  touch ~/Downloads/list.txt
+  echo "${projects_list[@]}" > ~/Downloads/list.txt
+  bat ~/Downloads/list.txt
+  while read -r line; do
+    file_name=$(echo "$line" | cut -d ':' -f 1)
+    cd $file_name
+    git restore .
     cd - > /dev/null
-  done
+  done < ~/Downloads/list.txt
+
+  rm ~/Downloads/list.txt
 }
 
-select action in "nvim" "clipboard" "update" "show_stagged" "remove_stagged"
+select action in "nvim" "clipboard" "update" "remove_stagged"
 do
   case $action in
     nvim)
@@ -60,9 +49,6 @@ do
     update)
       gitUpdateAll
       break
-      ;;
-    show_stagged)
-      showStagged
       ;;
     remove_stagged)
       removeStagged
