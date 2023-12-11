@@ -26,6 +26,7 @@ function removeStagged(){
     file_name=$(echo "$line" | cut -d ':' -f 1)
     cd $file_name
     git restore .
+    git clean -fd
     cd - > /dev/null
   done < ~/Downloads/list.txt
 
