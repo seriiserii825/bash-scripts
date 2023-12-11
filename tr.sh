@@ -17,6 +17,10 @@ do
       trans -b :ru "$clipboard"  | tr -d '\n' | xsel -b -i 
       break
       ;;
+    "ro")
+      trans -b :ro "$clipboard"  | tr -d '\n' | xsel -b -i 
+      break
+      ;;
     *)
       echo "ERROR! Please select between 1..5";;
   esac
