@@ -2,7 +2,7 @@
 
 clipboard=$(xclip -o -selection clipboard)
 
-select lang in "en" "it" "ru"
+select lang in "en" "it" "ru" "ro"
 do
   case $lang in
     "en")
