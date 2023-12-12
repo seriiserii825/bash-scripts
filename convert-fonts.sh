@@ -1,4 +1,4 @@
-#! /bin/bash -x
+#! /bin/bash
 
 function ttfToWoff2() {
   if ls *.ttf 1> /dev/null 2>&1; then
@@ -13,8 +13,17 @@ function ttfToWoff2() {
 }
 
 function woffToCss(){
-  if ls *.woff 1> /dev/null 2>&1; then
+  woff_files=$(find . -maxdepth 1 -type f -name "*.woff")
+  woff2_files=$(find . -maxdepth 1 -type f -name "*.woff2")
+
+  if [[ -n "$woff2_files" && -n "$woff_files" ]]; then
     touch fonts.css
+    read -p "Enter relative path to fonts folder (default: assets/fonts): " rel_path
+    if [[ -n "$rel_path" ]]; then
+      rel_path="${rel_path%/}"
+    else
+      rel_path='assets/fonts'
+    fi
     for file in *.woff; do
       # Extract font name from the file name by removing the extension and any style information
       font_original="${file%.*}"
@@ -52,18 +61,18 @@ function woffToCss(){
 
       echo "@font-face {
       font-family: '$capital_name'; 
-      src: url('assets/fonts/${file%.*}.woff2') format('woff2'),
-      url('assets/fonts/${file%.*}.woff') format('woff');
+      src: url('${rel_path}/${file%.*}.woff2') format('woff2'),
+      url('${rel_path}/${file%.*}.woff') format('woff');
       font-weight: $font_weight;
       font-style: $font_style;
       font-display: swap;
       }" >> fonts.css
     done
-    bat fonts.css
     cat fonts.css | xclip -selection clipboard
+    bat fonts.css
     rm fonts.css
   else
-    echo "${tmagenta}no woff files found${treset}"
+    echo "${tmagenta}No .woff2 and woff files found.${treset}"
   fi
 }
 
@@ -72,9 +81,8 @@ do
   case $action in
     info)
       echo "${tgreen}Add to current directory ttf or woff and woff2 files${treset}"
-      echo "${tblue}This script will convert them to woff2 and woff and generate css file${treset}"
-      echo "${tyellow}css file will be copied to clipboard${treset}"
-      break
+      echo "${tgreen}This script will convert them to woff2 and woff and generate css file${treset}"
+      echo "${tgreen}Css file will be copied to clipboard${treset}"
       ;;
     convert)
       ttfToWoff2
