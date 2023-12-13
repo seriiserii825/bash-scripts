@@ -25,6 +25,11 @@ function apiCreate(){
   read -p "${tgreen}Give file name , example 'authApi': ${treset}" file_name
   mkdir -p "src/api"
   api_file_path="src/api/$file_name.ts"
+  if [ -f "$api_file_path" ]
+    then
+      echo "${tred}$api_file_path already exists${treset}"
+      exit 1
+  fi
   touch "$api_file_path"
   if [ ! -f "$api_layout_path" ]
     then
@@ -86,6 +91,11 @@ function createStore(){
   read -p "${tgreen}Give function name with camelCase, example 'usePiniaStore': ${treset}" store_func
 
   file_path="src/stores/$store_name-store.ts"
+  if [ -f "$file_path" ]
+    then
+      echo "${tred}$file_path already exists${treset}"
+      exit 1
+  fi
   touch  $file_path
   
   if [ ! -f "$store_layout_path" ]
@@ -101,8 +111,13 @@ function interfaceLayoutToFile(){
   dir_name=$1
   file_name=$2
   mkdir -p  "src/interfaces/$dir_name"
-  touch  "src/interfaces/$dir_name"/"$file_name.ts"
   file_path="src/interfaces/$dir_name/$file_name.ts"
+  if [ -f "$file_path" ]
+    then
+      echo "${tred}$file_path already exists${treset}"
+      exit 1
+  fi
+  touch  $file_path
   cat "$inteface_layout_path" > $file_path 
   sed -i -e "s/IDefault/$file_name/g" "$file_path" 
   echo "$file_path was created";
@@ -135,6 +150,11 @@ function createHook(){
     read -p "${tgreen}Give hook name, example 'useLocalStorage': ${treset}" hook_name
     mkdir -p "src/hooks"
     file_path="src/hooks/$hook_name.ts"
+    if [ -f "$file_path" ]
+      then
+        echo "${tred}$file_path already exists${treset}"
+        exit 1
+    fi
     touch "$file_path"
     cat <<TEST >> "$file_path"
     export function $hook_name() {
@@ -179,6 +199,11 @@ function scssCreate(){
   mkdir -p "src/scss/blocks/$dir_name"
   # create scss file
   scss_file_path="src/scss/blocks/$dir_name/$file_name.scss"
+  if [ -f "$scss_file_path" ]
+    then
+      echo "${tred}$scss_file_path already exists${treset}"
+      exit 1
+  fi
   touch "$scss_file_path"
   # copy layout to file
   cat $scss_layout_path > "$scss_file_path"
@@ -216,6 +241,11 @@ select action in $api $cmp $store $interface $hook $scss; do
       read -p "${tgreen}Give component name, example 'Home': ${treset}" cmp_name
       mkdir -p "src/components/$cmp_dir"
       file_path="src/components/$cmp_dir/$cmp_name.vue"
+      if [ -f "$file_path" ]
+        then
+          echo "${tred}$file_path already exists${treset}"
+          exit 1
+      fi
       touch "$file_path"
       cp "$component_layout_path" "$file_path"
       sed -i -e "s/default/$cmp_name/g" "$file_path"
