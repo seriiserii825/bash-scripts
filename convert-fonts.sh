@@ -1,5 +1,37 @@
 #! /bin/bash
 
+# npm uninstall -g ttf2woff && Purge woff2
+
+function checkFonts(){
+  woff2_is_installed=$(which woff2_compress)
+  ttf2woff_is_installed=$(npm ls -g | grep ttf2woff)
+  if [ -z "$woff2_is_installed" ]; then
+    echo "${tmagenta}woff2_compress is not installed${treset}"
+    select yn in "Install woff2_compress" "Exit"; do
+      case $yn in
+        "Install woff2_compress" ) 
+          sudo apt install woff2 -y; 
+          break
+          ;;
+        "Exit" ) exit;;
+      esac
+    done
+  fi
+  if [ -z "$ttf2woff_is_installed" ]; then
+    echo "${tmagenta}ttf2woff is not installed${treset}"
+    select yn in "Install ttf2woff" "Exit"; do
+      case $yn in
+        "Install ttf2woff" ) 
+          echo "use node > 16"
+          npm install -g ttf2woff; 
+          break
+          ;;
+        "Exit" ) exit;;
+      esac
+    done
+  fi
+}
+
 function ttfToWoff2() {
   if ls *.ttf 1> /dev/null 2>&1; then
     for file in *.ttf; do
@@ -66,13 +98,13 @@ function woffToCss(){
       font-weight: $font_weight;
       font-style: $font_style;
       font-display: swap;
-      }" >> fonts.css
-    done
-    cat fonts.css | xclip -selection clipboard
-    bat fonts.css
-    rm fonts.css
-  else
-    echo "${tmagenta}No .woff2 and woff files found.${treset}"
+    }" >> fonts.css
+  done
+  cat fonts.css | xclip -selection clipboard
+  bat fonts.css
+  rm fonts.css
+else
+  echo "${tmagenta}No .woff2 and woff files found.${treset}"
   fi
 }
 
@@ -85,6 +117,7 @@ do
       echo "${tgreen}Css file will be copied to clipboard${treset}"
       ;;
     convert)
+      checkFonts
       ttfToWoff2
       woffToCss
       break
