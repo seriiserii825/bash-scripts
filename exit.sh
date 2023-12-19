@@ -2,6 +2,7 @@
 
 # Get the process IDs (PIDs) of Bash instances
 zsh_pids=$(pgrep -f zsh)
+echo "Bash PIDs: $zsh_pids"
 
 # Check if any Bash instances are running
 if [ -n "$zsh_pids" ]; then
