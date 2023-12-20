@@ -10,14 +10,17 @@ do
           echo "${tblue}Enter the width: ${treset}"
             read  width
             mogrify -resize $width"x" $*
+            break
             ;;
         HEIGHT)
           echo "${tyellow}Enter the width: ${treset}"
             read  height
             mogrify -resize x$height $*
+            break
             ;;
         FLOP)
           mogrify -flop $*
+            break
             ;;
         *)
             echo "Invalid option"
