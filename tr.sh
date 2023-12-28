@@ -2,7 +2,7 @@
 
 clipboard=$(xclip -o -selection clipboard)
 
-select lang in "en" "it" "ru" "ro"
+select lang in "en" "it" "ru" "ro" "de"
 do
   case $lang in
     "en")
@@ -21,8 +21,12 @@ do
       trans -b :ro "$clipboard"  | tr -d '\n' | xsel -b -i 
       break
       ;;
+    "de")
+      trans -b :de "$clipboard"  | tr -d '\n' | xsel -b -i 
+      break
+      ;;
     *)
-      echo "ERROR! Please select between 1..5";;
+      echo "ERROR! Please select between 1..6";;
   esac
 done
 
