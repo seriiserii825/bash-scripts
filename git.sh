@@ -7,7 +7,7 @@ function gitUpdateAll(){
   dirs=(~/Documents/Knowledge-base ~/xubuntu ~/.password-store ~/.config/nvim ~/i3wm-home ~/i3wm-office ~/Documents/bash-scripts ~/Documents/bash-apps ~/Documents/bash-wp ~/Documents/bash)
   for dir in "${dirs[@]}"; do
     echo "=========================================="
-    echo "Update for $dir"
+    echo "${tblue}Update for $dir${treset}"
     cd $dir
     git add .
     git commit -m "updated by script at $date_now"
