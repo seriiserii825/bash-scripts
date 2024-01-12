@@ -16,7 +16,7 @@ function makeBackup(){
   last_file=$(ls -t | head -n1)
   cp $last_file /home/serii/Downloads
   echo "${tgreen}Backup created!${treset}"
-  
+  exit 0
 }
 
 function downloadBackup(){
@@ -35,6 +35,7 @@ function downloadBackup(){
   cd ../../ai1wm-backups
   wget "$domain_url/wp-content/ai1wm-backups/$backup_file"
   wp ai1wm restore $backup_file
+  exit 0
 }
 
 select choice in "Make Backup" "Download Backup" "Exit"; do
