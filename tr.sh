@@ -1,6 +1,17 @@
 #!/bin/bash
 
+# check if trans-shell is installed
+
+if ! [ -x "$(command -v trans)" ]
+then
+  echo "${tmagenta}trans-shell is not installed. Please install it first.${treset}"
+  sudo apt install gawk
+  wget git.io/trans
+  chmod +x ./trans
+  sudo mv trans /usr/bin/
+fi
 clipboard=$(xclip -o -selection clipboard)
+
 
 select lang in "en" "it" "ru" "ro" "de"
 do
